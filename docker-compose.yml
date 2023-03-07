@@ -1,0 +1,23 @@
+# https://hub.docker.com/r/bitnami/solr
+# https://docs.platform.sh/guides/drupal9/solr.html
+# /opt/bitnami/solr/server/solr/dafe-d10
+
+version: '2'
+
+networks:
+  solr-network:
+    driver: bridge
+
+services:
+  solr-node1:
+    image: docker.io/bitnami/solr:8
+    environment:
+      - SOLR_ENABLE_AUTHENTICATION=no
+      - SOLR_CORE_CONF_DIR=/data/search_api_solr_4
+      - SOLR_CORES=dafe-d10
+    networks:
+      - solr-network
+    ports:
+      - '8983:8983'
+    volumes:
+      - ./solr_drupal_config:/data/search_api_solr_4
