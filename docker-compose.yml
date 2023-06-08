@@ -4,24 +4,21 @@
 
 version: '2'
 
+networks:
+  solr-network:
+    driver: bridge
 services:
   solr-node1:
     image: docker.io/bitnami/solr:8
     environment:
+      - SOLR_PORT_NUMBER=8983
       - SOLR_ENABLE_AUTHENTICATION=no
       - SOLR_CORE_CONF_DIR=/data/search_api_solr_4
       - SOLR_CORES=dafe-d10
     volumes:
       - ./solr_drupal_config:/data/search_api_solr_4
-    labels:
-      - "traefik.http.services.${PROJECT_NAME}_solr.loadbalancer.server.port=8983"
-      - "traefik.http.routers.${PROJECT_NAME}_solr.rule=Host(`solr.${PROJECT_BASE_URL}`)"
-
-  traefik:
-    image: traefik:v2.0
-    container_name: "${PROJECT_NAME}_traefik"
-    command: --api.insecure=true --providers.docker
+      - ./solr-persistence:/bitnami
     ports:
-    - "${PROJECT_PORT}:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - '8983:8983'
+    networks:
+      - solr-network
